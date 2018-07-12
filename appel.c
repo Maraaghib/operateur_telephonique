@@ -7,7 +7,7 @@ typedef struct Operateur {
     char nom_op[50];
     char* capital_op;
     int nombre_index;
-    int liste_index[10]; // Les index doivent être tous différents
+    int liste_index[100]; // Les index doivent être tous différents
     // Les index des opérateurs aussi doivent différents (L'INDEX "9" EST DEJA PRIS PAR UN AUTRE OPERATEUR !!! ENTRER L'INDICE :)
     int prix_abonnement; // Le prix de l'abonnement min est 500 FCFA
     int credit_initial;
@@ -44,15 +44,29 @@ void nouvel_operateur(int *nb_operateurs) {
                 doublon = false;
                 printf("ENTRER L'INDICE N %d\n", i+1);
                 scanf("%d", &operateur[op].liste_index[i]);
+                // Verifier que l'index est compose de 2 chiffres
+                while (operateur[op].liste_index[i] < 10 || operateur[op].liste_index[i] > 99 ) { // Tant que l'index n'est pas 2 chiffres
+                    printf("ENTRER L'INDICE N %d [2 CHIFFRES]\n", i+1);
+                    scanf("%d", &operateur[op].liste_index[i]);
+                }
                 // Tester si on a donné un index existant
+
+                for (int l = 0; l < i; l++) {
+                    if (operateur[op].liste_index[i] == operateur[op].liste_index[l]) {
+                        doublon = true;
+                    }
+                }
                 for (int j = 0; j < op; j++) {
-                    for (int k = 0; k < i; k++) {
+                    for (int k = 0; k < operateur[op].nombre_index; k++) {
                         if (operateur[op].liste_index[i] == operateur[j].liste_index[k]) {
-                            doublon = true;
+                            doublon |= true;
                             // todo: Un message pour dire que un autre opérateur détient déjà cet index
                             // L'INDEX "11" EST DEJA PRIS PAR UN AUTRE OPERATEUR !!! ENTRER L'INDICE N 2 :
                         }
                     }
+                }
+                if (doublon == true) {
+                    printf("L'INDEX \"%d\" EST DEJA PRIS PAR UN AUTRE OPERATEUR !!! ", operateur[op].liste_index[i]);
                 }
             } while (doublon == true);
         }
@@ -249,6 +263,72 @@ void editer_operateur(int nb_operateurs) {
     }
 }
 
+void ajouter_index(int nb_operateurs) {
+    char nom_cherche[50];
+    int nb_index;
+    printf("------------AJOUTER DES INDEX------------\n\n\n");
+    printf("NOM OPERATEUR : ");
+    scanf("%s", &nom_cherche);
+
+    int op = 0;
+    while ( op < nb_operateurs && strcmp(operateur[op].nom_op, nom_cherche) != 0) {
+        op++;
+    }
+    if (strcmp(operateur[op].nom_op, nom_cherche) != 0) {
+        printf("\n\nAUCUN OPERATEUR TROUVE AVEC LE NOM \"%s\"\n\n", nom_cherche);
+    }
+    else {
+        printf("LES INDEX DEJA DISPONIBLES :\n");
+        printf("****************************\n");
+        for (int i = 0; i < operateur[op].nombre_index; i++) {
+            printf("%d  ", operateur[op].liste_index[i]);
+        }
+        printf("\n****************************\n");
+
+        do {
+            printf("NOMBRE D'INDEX A JOUTER :\n");
+            scanf("%d", &nb_index);
+        } while (nb_index < 1);
+        if (nb_index != 0) {
+            int ancien_nb_index = operateur[op].nombre_index;
+            int nouveau_nb_index = operateur[op].nombre_index + nb_index;
+            for (int i = ancien_nb_index; i < nouveau_nb_index; i++) {
+                bool doublon;
+                do {
+                    doublon = false;
+                    printf("ENTRER L'INDICE N %d\n", i+1);
+                    scanf("%d", &operateur[op].liste_index[i]);
+                    // Verifier que l'index est compose de 2 chiffres
+                    while (operateur[op].liste_index[i] < 10 || operateur[op].liste_index[i] > 99 ) { // Tant que l'index n'est pas 2 chiffres
+                        printf("ENTRER L'INDICE N %d [2 CHIFFRES]\n", i+1);
+                        scanf("%d", &operateur[op].liste_index[i]);
+                    }
+                    // Tester si on a donné un index existant
+
+                    // for (int l = 0; l < i; l++) {
+                    //     if (operateur[op].liste_index[i] == operateur[op].liste_index[l]) {
+                    //         doublon = true;
+                    //     }
+                    // }
+                    for (int j = 0; j < nb_operateurs; j++) {
+                        for (int k = 0; k < operateur[j].nombre_index; k++) {
+                            if (operateur[op].liste_index[i] == operateur[j].liste_index[k]) {
+                                doublon |= true;
+                                // todo: Un message pour dire que un autre opérateur détient déjà cet index
+                                // L'INDEX "11" EST DEJA PRIS PAR UN AUTRE OPERATEUR !!! ENTRER L'INDICE N 2 :
+                            }
+                        }
+                    }
+                    if (doublon == true) {
+                        printf("L'INDEX \"%d\" EST DEJA PRIS PAR UN AUTRE OPERATEUR !!! ", operateur[op].liste_index[i]);
+                    }
+                } while (doublon == true);
+            }
+            operateur[op].nombre_index += nb_index;
+        }
+    }
+}
+
 void menu_principal() {
     int choix;
 
@@ -322,32 +402,51 @@ void menu_principal() {
 
         case 5:
             system("cls");
-            printf("Menu 5\n");
+            ajouter_index(nb_op);
+            system("pause");
+            printf("Appuyer sur une touche pour continuer ... ");
+            system("cls");
+            menu_principal();
         break;
 
         case 6:
             system("cls");
-            printf("Menu 6\n");
+            system("pause");
+            printf("Appuyer sur une touche pour continuer ... ");
+            system("cls");
+            menu_principal();
         break;
 
         case 7:
             system("cls");
-            printf("Menu 7\n");
+            system("pause");
+            printf("Appuyer sur une touche pour continuer ... ");
+            system("cls");
+            menu_principal();
         break;
 
         case 8:
             system("cls");
-            printf("Menu 8\n");
+            system("pause");
+            printf("Appuyer sur une touche pour continuer ... ");
+            system("cls");
+            menu_principal();
         break;
 
         case 9:
             system("cls");
-            printf("Menu 9\n");
+            system("pause");
+            printf("Appuyer sur une touche pour continuer ... ");
+            system("cls");
+            menu_principal();
         break;
 
         case 10:
             system("cls");
-            printf("Menu 10\n");
+            system("pause");
+            printf("Appuyer sur une touche pour continuer ... ");
+            system("cls");
+            menu_principal();
         break;
 
         case 11:
