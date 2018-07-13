@@ -17,11 +17,27 @@ typedef struct Operateur {
     int cout_sms_op;
     int cout_sms_autre_op;
     int cout_sms_inter;
+    int indices[25][4]; // Tableau des 100 indices (4*25 = 100)
+    int num_tels[25][4]; // Tableau des 100 numéros de téléphones (4*25 = 100)
 } Operateur;
 
 Operateur operateur[1000];
 
 int nb_op = 0;
+
+/* Cette fonction rencoie un nombre aleatoire de 7 chiffres pour les numéros de téléphone */
+int random_num_tel() {
+    int num_tel = 0;
+    num_tel +=  ((rand() % 9)+1) * 1000000;
+    num_tel +=  ((rand() % 9)+1) * 100000;
+    num_tel +=  ((rand() % 9)+1) * 10000;
+    num_tel +=  ((rand() % 9)+1) * 1000;
+    num_tel +=  ((rand() % 9)+1) * 100;
+    num_tel +=  ((rand() % 9)+1) * 10;
+    num_tel +=  ((rand() % 9)+1) ;
+
+    return num_tel;
+}
 
 void nouvel_operateur(int *nb_operateurs) {
     int op = 0;
@@ -93,6 +109,16 @@ void nouvel_operateur(int *nb_operateurs) {
         printf("COUT SMS VERS INTERNATIONAL [la seconde] :\n", operateur[op].nom_op);
         scanf("%d", &operateur[op].cout_sms_inter);
         printf("-------\n");
+        // Ajout automatique des indices et numeros de telephone de l'operateur
+        int indice = 1;
+        for (int i = 0; i < 25; i++) {
+            for (int j = 0; j < 4; j++) {
+                int num_tel = random_num_tel();
+                operateur[op].indices[i][j] = indice;
+                operateur[op].num_tels[i][j] = num_tel;
+                indice++;
+            }
+        }
 
         printf("Voulez-vous ajouter un autre operateur[op] ? [O/N]\n");
         scanf(" %c", &ajout_autre_op);
@@ -108,21 +134,6 @@ void nouvel_operateur(int *nb_operateurs) {
     }
 
     *nb_operateurs = op; // retourner le nombre total d'operateurs
-}
-
-/* Cette fonction rencoie un nombre aleatoire de 7 chiffres pour les numéros de téléphone */
-int random_num_tel() {
-    int num_tel = 0;
-    num_tel +=  ((rand() % 9)+1) * 10000000;
-    num_tel +=  ((rand() % 9)+1) * 1000000;
-    num_tel +=  ((rand() % 9)+1) * 100000;
-    num_tel +=  ((rand() % 9)+1) * 10000;
-    num_tel +=  ((rand() % 9)+1) * 1000;
-    num_tel +=  ((rand() % 9)+1) * 100;
-    num_tel +=  ((rand() % 9)+1) * 10;
-    num_tel +=  ((rand() % 9)+1) ;
-
-    return num_tel;
 }
 
 void liste_operateurs(int op) {
@@ -145,12 +156,10 @@ void liste_operateurs(int op) {
     printf("\tINDICE\tNUMERO TEL\tINDICE\tNUMERO TEL\tINDICE\tNUMERO TEL\tINDICE\tNUMERO TEL\n\n");
     printf("____________________________________________________________________________________________________\n");
 
-    int indice = 1;
-    for (int i = 1; i <= 25; i++) {
-        for (int j = 1; j <= 4; j++) {
-            int num_tel = random_num_tel();
-            printf("\t%d\t%d", indice, num_tel);
-            indice++;
+    // int indice = 1;
+    for (int i = 0; i < 25; i++) {
+        for (int j = 0; j < 4; j++) {
+            printf("\t%d\t%d\t", operateur[op].indices[i][j], operateur[op].num_tels[i][j]);
         }
         printf("\n");
         for (int j = 0; j < 4; j++) {
@@ -329,6 +338,58 @@ void ajouter_index(int nb_operateurs) {
     }
 }
 
+void nouvel_abonne(int nb_operateurs) {
+    char nom_cherche[50];
+    int indice_choisi;
+    int index_choisi;
+    bool indice_hors_liste = true;
+    printf("------------NOUVEL ABONNE------------\n\n\n");
+    printf("NOM DE VOTRE OPERATEUR :");
+    scanf("%s", &nom_cherche);
+
+    int op = 0;
+    while ( op < nb_operateurs && strcmp(operateur[op].nom_op, nom_cherche) != 0) {
+        op++;
+    }
+    if (strcmp(operateur[op].nom_op, nom_cherche) != 0) {
+        printf("\nL'OPERATEUR \"%s\" N'EXISTE PAS!!!\n", nom_cherche);
+    }
+    else {
+        liste_operateurs(op);
+        printf("\nINDICE DU NUMERO DE TELEPHONE CHOISI (voir la liste ci-dessus) :");
+        scanf("%d", &indice_choisi);
+        for (int i = 0; i < 25; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (indice_choisi == operateur[op].indices[i][j]) { // Si l'indice existe dans la liste des indices
+                    indice_hors_liste &= false;
+                }
+            }
+        }
+        while (indice_hors_liste == true) {
+            printf("L'INDICE NE SE TROUVE PAS DANS LA LISTE!!! REESSAYER\n");
+            scanf("%d", &indice_choisi);
+            for (int i = 0; i < 25; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (indice_choisi == operateur[op].indices[i][j]) { // Si l'indice existe dans la liste des indices
+                        indice_hors_liste &= false;
+                    }
+                }
+            }
+        }
+        printf("CHOISIR UN INDEX POUR VOTRE NUMERO\n");
+        scanf("%d", &index_choisi);
+        for (int i = 0; i < operateur[op].nombre_index; i++) {
+            if (index_choisi == operateur[op].liste_index[i]) {
+                index_existe = true;
+            }
+        }
+        if (index_existe == true) {
+            printf("-------\n\n");
+            printf("IDENTIFIER VOTRE NUMERO MAINTENANT ? [O/N]\n");
+        }
+    }
+}
+
 void menu_principal() {
     int choix;
 
@@ -411,6 +472,7 @@ void menu_principal() {
 
         case 6:
             system("cls");
+            nouvel_abonne(nb_op);
             system("pause");
             printf("Appuyer sur une touche pour continuer ... ");
             system("cls");
