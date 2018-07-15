@@ -12,7 +12,7 @@ typedef struct Client {
     int CIN;
     char nom[50];
     char prenom[50];
-    char date_de_naissance[10];
+    char date_de_naissance[11];
     char adresse[100];
     char nationalite[30];
     int index;
@@ -372,6 +372,13 @@ void nouvel_abonne(int nb_operateurs) {
     int numero_definitif; // Le numero avec l'index
     bool numero_deja_attribue = false;
 
+    int CIN = 0;
+    char nom[50] = "";
+    char prenom[50] = "";
+    char date_de_naissance[11] = "";
+    char adresse[100] = "";
+    char nationalite[30] = "";
+
     printf("------------NOUVEL ABONNE------------\n\n\n");
     printf("NOM DE VOTRE OPERATEUR :");
     scanf("%s", &nom_op_cherche);
@@ -450,13 +457,6 @@ void nouvel_abonne(int nb_operateurs) {
                     scanf(" %c", &rep_identifie);
                 }
 
-                int CIN = 0;
-                char nom[50] = "";
-                char prenom[50] = "";
-                char date_de_naissance[10] = "";
-                char adresse[100] = "";
-                char nationalite[30] = "";
-
                 if (rep_identifie == 'N') {
                     /* Rien a faire, ici. On ne va juste enregistrer que son numero seulement */
                 }
@@ -491,6 +491,48 @@ void nouvel_abonne(int nb_operateurs) {
                 operateur[op].nombre_abonnes++;
             }
         }
+    }
+}
+
+void infos_abonne(int nb_operateurs) {
+    char nom_op_cherche[50];
+    int CIN;
+
+    printf("------------INFORMATIONS ABONNE------------\n\n\n");
+    printf("NOM OPERATEUR : ");
+    scanf("%s", &nom_op_cherche);
+
+    int op = 0;
+    while ( op < nb_operateurs && strcmp(operateur[op].nom_op, nom_op_cherche) != 0) {
+        op++;
+    }
+    if (strcmp(operateur[op].nom_op, nom_op_cherche) != 0) {
+        printf("\nL'OPERATEUR \"%s\" N'EXISTE PAS!!!\n", nom_op_cherche);
+    }
+    else {
+        printf("CIN DE L'ABONNE :\n");
+        scanf("%d", &CIN);
+
+        int abonne = 0;
+        while (abonne < operateur[op].nombre_abonnes && CIN != operateur[op].abonnes[abonne].CIN) {
+            abonne++;
+        }
+        // printf("CIN saisi = %d\n", CIN);
+        // printf("CIN de l'abonne \"%d\" = %d\n", abonne, operateur[op].abonnes[abonne].CIN);
+        if (CIN != operateur[op].abonnes[abonne].CIN) {
+            printf("CE CLIENT N'EXISTE PAS !!!\n");
+        }
+        else {
+            // printf("Affichons les infos de ce CLIENT\n");
+            printf("          CIN: %d\n", operateur[op].abonnes[abonne].CIN);
+            printf("          NOM: %s\n", operateur[op].abonnes[abonne].nom);
+            printf("       PRENOM: %s\n", operateur[op].abonnes[abonne].prenom);
+            printf("   DATE NAISS: %s\n", operateur[op].abonnes[abonne].date_de_naissance);
+            printf("      ADRESSE: %s\n", operateur[op].abonnes[abonne].adresse);
+            printf("  NATIONALITE: %s\n", operateur[op].abonnes[abonne].nationalite);
+            printf("    TELEPHONE: %d %d\n", operateur[op].abonnes[abonne].index, operateur[op].abonnes[abonne].numero);
+        }
+
     }
 }
 
@@ -585,6 +627,7 @@ void menu_principal() {
 
         case 7:
             system("cls");
+            aboonnes_operateur(nb_op);
             system("pause");
             printf("Appuyer sur une touche pour continuer ... ");
             system("cls");
@@ -593,6 +636,7 @@ void menu_principal() {
 
         case 8:
             system("cls");
+            infos_abonne(nb_op);
             system("pause");
             printf("Appuyer sur une touche pour continuer ... ");
             system("cls");
