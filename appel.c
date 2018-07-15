@@ -494,6 +494,16 @@ void nouvel_abonne(int nb_operateurs) {
     }
 }
 
+void afficher_infos_abonne(int op, int abonne) {
+    printf("          CIN: %d\n", operateur[op].abonnes[abonne].CIN);
+    printf("          NOM: %s\n", operateur[op].abonnes[abonne].nom);
+    printf("       PRENOM: %s\n", operateur[op].abonnes[abonne].prenom);
+    printf("   DATE NAISS: %s\n", operateur[op].abonnes[abonne].date_de_naissance);
+    printf("      ADRESSE: %s\n", operateur[op].abonnes[abonne].adresse);
+    printf("  NATIONALITE: %s\n", operateur[op].abonnes[abonne].nationalite);
+    printf("    TELEPHONE: %d %d\n", operateur[op].abonnes[abonne].index, operateur[op].abonnes[abonne].numero);
+}
+
 void infos_abonne(int nb_operateurs) {
     char nom_op_cherche[50];
     int CIN;
@@ -524,16 +534,40 @@ void infos_abonne(int nb_operateurs) {
         }
         else {
             // printf("Affichons les infos de ce CLIENT\n");
-            printf("          CIN: %d\n", operateur[op].abonnes[abonne].CIN);
-            printf("          NOM: %s\n", operateur[op].abonnes[abonne].nom);
-            printf("       PRENOM: %s\n", operateur[op].abonnes[abonne].prenom);
-            printf("   DATE NAISS: %s\n", operateur[op].abonnes[abonne].date_de_naissance);
-            printf("      ADRESSE: %s\n", operateur[op].abonnes[abonne].adresse);
-            printf("  NATIONALITE: %s\n", operateur[op].abonnes[abonne].nationalite);
-            printf("    TELEPHONE: %d %d\n", operateur[op].abonnes[abonne].index, operateur[op].abonnes[abonne].numero);
+            afficher_infos_abonne(op, abonne);
         }
 
     }
+}
+
+void aboonnes_operateur(int nb_operateurs) {
+    char nom_op_cherche[50];
+
+    printf("------------LES ABONNES------------\n\n\n");
+    printf("NOM OPERATEUR : ");
+    scanf("%s", &nom_op_cherche);
+
+    int op = 0;
+    while ( op < nb_operateurs && strcmp(operateur[op].nom_op, nom_op_cherche) != 0) {
+        op++;
+    }
+    if (strcmp(operateur[op].nom_op, nom_op_cherche) != 0) {
+        printf("\nL'OPERATEUR \"%s\" N'EXISTE PAS!!!\n", nom_op_cherche);
+    }
+    else {
+        printf("LISTE DES ABONNES CHEZ \"%s\"\n\n", nom_op_cherche);
+        for (int i = 0; i < operateur[op].nombre_abonnes; i++) {
+            if (operateur[op].abonnes[i].CIN == 0) { // Si le client ne s'est pas identifie
+                printf("CE CLIENT N'EST PAS IDENTIFIE!!!\n");
+                printf("    TELEPHONE: %d %d\n", operateur[op].abonnes[i].index, operateur[op].abonnes[i].numero);
+            }
+            else { // Si le client s'est identifie, affichons toutes ses infos
+                afficher_infos_abonne(op, i);
+            }
+            printf("----------------------------------------\n");
+        }
+    }
+    printf("\n");
 }
 
 void menu_principal() {
