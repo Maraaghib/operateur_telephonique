@@ -8,6 +8,17 @@ typedef struct Num_tel {
     int numero; // Le "corps" du numero (sans l'indice)
 } Num_tel;
 
+typedef struct Client {
+    int CIN;
+    char nom[50];
+    char prenom[50];
+    char date_de_naissance[10];
+    char adresse[100];
+    char nationalite[30];
+    int index;
+    int numero;
+} Client;
+
 typedef struct Operateur {
     char nom_op[50];
     char* capital_op;
@@ -23,12 +34,15 @@ typedef struct Operateur {
     int cout_sms_autre_op;
     int cout_sms_inter;
     Num_tel liste_nums[25][4]; // Tableau des numeros de telephone et toutes les infos qui vont avec
+    int nombre_abonnes;
+    Client abonnes[1000];
     // int indices[25][4]; // Tableau des 100 indices (4*25 = 100)
     // int liste_nums[25][4]; // Tableau des 100 numéros de téléphones (4*25 = 100)
 } Operateur;
 
 Operateur operateur[1000];
 int numero_attribues[10000]; // Tableau dans lequel on enregistre les numeros attribues
+int nombre_numeros_atribues = 0;
 
 
 int nb_op = 0;
@@ -129,7 +143,7 @@ void nouvel_operateur(int *nb_operateurs) {
                 indice++;
             }
         }
-
+        operateur[op].nombre_abonnes = 0;
         printf("Voulez-vous ajouter un autre operateur[op] ? [O/N]\n");
         scanf(" %c", &ajout_autre_op);
 
@@ -411,33 +425,70 @@ void nouvel_abonne(int nb_operateurs) {
             printf("L'INDEX \"%d\" N'EXISTE PAS CHEZ \"%s\"\n", index_choisi, nom_op_cherche);
         }
         else {
-            // Composer un numero definitif
+            // Créer un numero definitif à partir de l'index et le numero
             numero_definitif = (index_choisi * 10000000) + numero_sans_index;
 
             /* Tester si le numero est deja attribue ou non */
-            for (int i = 0; i < 10000; i++) {
+            for (int i = 0; i < nombre_numeros_atribues+1; i++) {
                 if (numero_definitif == numero_attribues[i]) {
                     numero_deja_attribue = true;
                 }
             }
             if (numero_deja_attribue == true) {
-                printf("LE NUMERO \"%s\" EST DEJA ATTRIBUE!!!\n");
+                printf("LE NUMERO \"%d\" EST DEJA ATTRIBUE!!!\n", numero_definitif);
                 printf("VEUILLEZ CHOISIR UN AUTRE NUMERO OU CHANGER D'INDEX\n");
             }
             else {
+                numero_attribues[nombre_numeros_atribues] = numero_definitif; // On enregistre le numeros dans le tableau de ceux deja attribues
+                nombre_numeros_atribues++;
+
                 printf("-------\n\n");
                 printf("IDENTIFIER VOTRE NUMERO MAINTENANT ? [O/N]\n");
-                scanf("%c", &rep_identifie);
+                scanf(" %c", &rep_identifie);
                 while (rep_identifie != 'O' && rep_identifie != 'N') {
                     printf("Repondre par O ou N\n");
                     scanf(" %c", &rep_identifie);
                 }
+
+                int CIN = 0;
+                char nom[50] = "";
+                char prenom[50] = "";
+                char date_de_naissance[10] = "";
+                char adresse[100] = "";
+                char nationalite[30] = "";
+
                 if (rep_identifie == 'N') {
-                    /* code */
+                    /* Rien a faire, ici. On ne va juste enregistrer que son numero seulement */
                 }
                 else {
-                    printf("CIN DU CLIENT\n");
+
+                    printf("CIN DU CLIENT [MIN 4 CHIFFRES] : ");
+                    scanf("%d", &CIN);
+                    while (CIN < 1000 || CIN > 9999) {
+                        printf("LE CIN DU CLIENT MIN DOIT ETRE 4 CHIFFRES : ");
+                        scanf("%d", &CIN);
+                    }
+                    printf("NOM DU CLIENT : ");
+                    scanf("%s", &nom);
+                    printf("PRENOM DU CLIENT : ");
+                    scanf("%s", &prenom);
+                    printf("DATE DE NAISSANCE DU CLIENT :  [jj-MM-aaaa]\n");
+                    scanf("%s", &date_de_naissance);
+                    printf("ADRESSE DU CLIENT : ");
+                    scanf("%s", &adresse);
+                    printf("NATIONALITE DU CLIENT : ");
+                    scanf("%s", &nationalite);
+
                 }
+                operateur[op].abonnes[operateur[op].nombre_abonnes].CIN = CIN;
+                strcpy(operateur[op].abonnes[operateur[op].nombre_abonnes].nom, nom);
+                strcpy(operateur[op].abonnes[operateur[op].nombre_abonnes].prenom, prenom);
+                strcpy(operateur[op].abonnes[operateur[op].nombre_abonnes].date_de_naissance, date_de_naissance);
+                strcpy(operateur[op].abonnes[operateur[op].nombre_abonnes].adresse, adresse);
+                strcpy(operateur[op].abonnes[operateur[op].nombre_abonnes].nationalite, nationalite);
+                operateur[op].abonnes[operateur[op].nombre_abonnes].index = index_choisi;
+                operateur[op].abonnes[operateur[op].nombre_abonnes].numero = numero_sans_index;
+                operateur[op].nombre_abonnes++;
             }
         }
     }
