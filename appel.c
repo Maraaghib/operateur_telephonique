@@ -50,6 +50,9 @@ int nb_op = 0;
 /* Cette fonction rencoie un nombre aleatoire de 7 chiffres pour les numéros de téléphone */
 int random_num_tel() {
     int num_tel = 0;
+    // rand() renvoie un nombre aléatoire
+    // rand() % 9 renvoie un nombre compris entre 0 et 8
+    // (rand() % 9)+1 renvoie un nombre compris entre 1 (0+1) et 9 (8+1)
     num_tel +=  ((rand() % 9)+1) * 1000000;
     num_tel +=  ((rand() % 9)+1) * 100000;
     num_tel +=  ((rand() % 9)+1) * 10000;
