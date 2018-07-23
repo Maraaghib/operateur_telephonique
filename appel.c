@@ -473,7 +473,19 @@ void nouvel_abonne(int nb_operateurs) {
                     printf("PRENOM DU CLIENT : ");
                     scanf("%s", &prenom);
                     printf("DATE DE NAISSANCE DU CLIENT :  [jj-MM-aaaa]\n");
-                    scanf("%s", &date_de_naissance);
+                    int jj; // Jour de naissance
+                    int mm; // Mois de naissance
+                    int aaaa; // Année de naissance
+                    scanf("%d", &jj);
+                    scanf("%d", &mm);
+                    scanf("%d", &aaaa);
+                    while ((jj < 1 || jj > 31) || (mm < 1 || mm > 12) || (aaaa < 1000 || aaaa > 9999)) {
+                        printf("La date est incorrecte ! Veuillez reessayer ...\n");
+                        scanf("%d", &jj);
+                        scanf("%d", &mm);
+                        scanf("%d", &aaaa);
+                    }
+                    sprintf(date_de_naissance, "%d-%d-%d", jj, mm, aaaa); // Conversion de la date naissance en chaine de caractères
                     printf("ADRESSE DU CLIENT : ");
                     scanf("%s", &adresse);
                     printf("NATIONALITE DU CLIENT : ");
